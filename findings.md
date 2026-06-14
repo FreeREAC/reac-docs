@@ -21,6 +21,57 @@ reference**. REAC audio is pair-interleaved (even/odd channels share a 6-byte ce
 shuffled byte order); a naive flat-3-byte decode produces false "distortion", so every
 measurement here uses the corrected pair-interleave decoder.
 
+## Where REAC stands — the state of knowledge
+
+Stepping back from the Wi-Fi problem, this is the picture of REAC as a protocol that
+the rig work has built up — stated at the level of observed behaviour, not anyone's
+firmware internals.
+
+REAC is a **synchronous Layer-2 audio transport** (EtherType `0x8819`) over a dedicated
+**100BASE-TX full-duplex** wire. One device is the **clock master** — a mixing console —
+and it clocks the whole fabric; the stageboxes are **clock slaves** that hardware-lock to
+it (a passive split receiver can also listen without participating). There is exactly one
+clock on the wire, the master's, and the per-frame cadence *is* that word clock.
+
+The wire framing and the sample clock behave like they live in dedicated silicon, not in
+the device's general-purpose CPU. Two things make that visible from outside: the framing is
+perfectly rigid (fixed frame geometry, a free-running per-frame counter that never skips
+even when transmission mutes, a link-check budget decremented once per frame), while the
+*connection and link state machine* — join, heartbeat, drop — behaves like ordinary
+software running on top. This is **inferred** from how the two layers respond, but it is
+consistent across every device observed. The practical consequence for anyone building a
+software endpoint: the wire layer has to be reconstructed from on-wire ground truth, because
+it is not visible in the part of the device a software node could ever imitate by copying.
+
+The two directions are framed differently, and this is **verified on the wire**:
+
+- **Downstream** (master → fabric) is a broadcast of one **fixed 40-channel frame**,
+  the same size regardless of sample rate — only the *packet rate* changes with rate.
+  This is the program audio a receiver plays.
+- **Upstream** (box → master) is a **unicast** of a **smaller, box-dependent frame**
+  carrying just that box's own input count (a 16-channel box returns a smaller frame than
+  a 40-channel one), at a fixed frame rate with the per-frame sample count scaling by rate
+  instead. REAC adds packets for more rate and shrinks frames for fewer channels — it never
+  enlarges a frame.
+
+The master's **clock source is selectable**. Front-panel and remote-control surfaces expose
+a clock-source selector with the options **word-clock in / REAC port A / REAC port B /
+internal (free-run) / AES pairs**, so the master can free-run on its own oscillator or slave
+its whole fabric to an external reference. (This is the control plane that *chooses* the
+clock; the actual sample-rate recovery is still the wire-cadence mechanism above.)
+
+**What is fully characterised:** the frame format and geometry, the `data[]` checksum, the
+frame counter as a drop-immune rate reference, and the sample rates with their exact packet
+cadences (48 kHz / 96 kHz measured, 44.1 kHz modelled). A receiver can validate and decode
+the downstream program from these alone.
+
+**What remains open:** the **upstream channel map** — the order in which a box's inputs land
+on the wire is scrambled and rate-independent, and single-tone probing could not pin it (it
+needs distinct simultaneous per-input tones); and the **active-join handshake** as a thing a
+software node *speaks* rather than merely *observes* — passively a node decodes without
+joining (connection is declared by frame length alone), but driving a real master through the
+join and holding the link is not yet proven from the speaking side.
+
 ## Finding 1 — Wi-Fi delivers every byte but destroys the timing
 
 The 5 GHz WDS delivers REAC with **zero loss, zero reorder, content byte-for-byte
