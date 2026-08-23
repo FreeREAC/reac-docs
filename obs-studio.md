@@ -23,12 +23,20 @@ node for the box you want.
 
 Two things about this surprise people, both verified on OBS Studio 32.1.1:
 
-- **It is the PulseAudio source, not a PipeWire one.** OBS's `linux-pipewire`
-  plugin is video only — it registers `pipewire-camera-source`,
-  `pipewire-desktop-capture-source`, `pipewire-screen-capture-source` and
-  `pipewire-window-capture-source`, and nothing for audio. Linux audio capture in
-  OBS is `pulse_input_capture` / `pulse_output_capture` (plus ALSA and JACK).
-  `reac-pw`'s nodes reach it through `pipewire-pulse`, where they appear under
+- **Which source you use depends on whether a PipeWire AUDIO plugin is installed.**
+  OBS's own `linux-pipewire` plugin is video only — it registers
+  `pipewire-camera-source`, `pipewire-desktop-capture-source`,
+  `pipewire-screen-capture-source` and `pipewire-window-capture-source`, and
+  nothing for audio. Core OBS captures Linux audio through
+  `pulse_input_capture` / `pulse_output_capture`, plus ALSA and JACK.
+
+  **A separate plugin adds PipeWire audio capture, and the rig has it**:
+  `linux-pipewire-audio` sits in `/usr/lib64/obs-plugins/` beside `obs-pwvideo`.
+  With it, `reac-pw`'s nodes are selectable as PipeWire sources directly, with no
+  Pulse layer in the path — which is the better arrangement, since it keeps the
+  graph one hop shorter and the node names intact.
+
+  Without it, the nodes still reach OBS through `pipewire-pulse`, appearing under
   their node names, e.g.
 
   ```
