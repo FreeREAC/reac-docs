@@ -16,6 +16,11 @@ Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communic
   the transport fabric (gretap + VLAN trunk), where the re-pacer goes and why
   de-jitter is directional, buffer sizing against the link-status budget, and the
   netifd/UCI persistence traps.
+- **[obs-studio.md](obs-studio.md)** — getting REAC channels into OBS Studio: take
+  them from `reac-pw`'s PipeWire nodes (via `pipewire-pulse` — OBS has no PipeWire
+  *audio* source), the 8-channel ceiling that bites boxes wider than 8 inputs, and
+  why FreeREAC does not ship an OBS plugin that binds the wire itself. Includes the
+  survey of the existing `obs-h8819-source` plugin.
 
 For the on-wire protocol itself, see
 [reac-protocol](https://github.com/FreeREAC/reac-protocol); for the raw working
