@@ -21,6 +21,11 @@ Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communic
   FPGA, not the reflashable CPU.) The path that works: openmixer as REAC master +
   the reac-aes67 bridge, packaged as a small appliance (Pi 4 monitoring-grade,
   i226 sample-accurate).
+- **[obs-studio.md](obs-studio.md)** — getting REAC channels into OBS Studio: take
+  them from `reac-pw`'s PipeWire nodes (via `pipewire-pulse` — OBS has no PipeWire
+  *audio* source), the 8-channel ceiling that bites boxes wider than 8 inputs, and
+  why FreeREAC does not ship an OBS plugin that binds the wire itself. Includes the
+  survey of the existing `obs-h8819-source` plugin.
 
 For the on-wire protocol itself, see
 [reac-protocol](https://github.com/FreeREAC/reac-protocol); for the raw working
