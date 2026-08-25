@@ -16,6 +16,11 @@ Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communic
   the transport fabric (gretap + VLAN trunk), where the re-pacer goes and why
   de-jitter is directional, buffer sizing against the link-status budget, and the
   netifd/UCI persistence traps.
+- **[aes67-firmware-feasibility.md](aes67-firmware-feasibility.md)** — can a REAC
+  stagebox be reflashed to speak AES67 natively? (No — the audio path lives in the
+  FPGA, not the reflashable CPU.) The path that works: openmixer as REAC master +
+  the reac-aes67 bridge, packaged as a small appliance (Pi 4 monitoring-grade,
+  i226 sample-accurate).
 
 For the on-wire protocol itself, see
 [reac-protocol](https://github.com/FreeREAC/reac-protocol); for the raw working
