@@ -257,6 +257,38 @@ egress silicon, ETF hardware offload fails on both the switch port and the SoC G
 there is no PTP hardware clock (software timestamping only). "Take it out of the bridge"
 doesn't help — the switch is the only egress path.
 
+## Finding 9 — 96 kHz over Wi-Fi can fail before it ever reaches steady state
+
+Everything above assumes the link established. At 96 kHz specifically, two more
+Wi-Fi-inherent effects can each prevent establishment from ever completing, and they
+are independent of the re-pacer and of each other:
+
+1. **The round trip floods the channel-map handshake.** A master re-sends its
+   channel-map declaration at a slow maintenance rate once a box is confirmed synced,
+   but floods it at whatever rate its own retry logic uses while a box is unconfirmed
+   — measured at up to ~250/s in one case, against ~1/s once accepted. At 96 kHz the
+   acceptance window this has to land inside is half the 48 kHz one (the per-frame
+   link-check budget halves when the rate doubles — see the link-check budget in
+   [reac-protocol](https://github.com/FreeREAC/reac-protocol)), and a Wi-Fi round trip
+   of a few milliseconds is enough on its own to keep missing it: measured on a link
+   whose data path was loss-free throughout, the flood never stopped and the box never
+   confirmed. Shrinking the re-pacer's buffer did not help — the bottleneck is
+   round-trip latency, not buffering, so no de-jitter tuning fixes it.
+2. **Doubling the rate can exhaust the radio's airtime.** Two 96 kHz segments sharing
+   one radio can saturate it: measured at ~2.7% frame loss and repeating ~200 ms
+   outages on whichever segment lost the airtime contention (which one loses can flip
+   from run to run), against zero loss carrying the same segments at 48 kHz. A frame
+   lost during establishment cannot be concealed the way a frame lost in an already-held
+   link can.
+
+Both effects are absent wired — the same boxes at 96 kHz direct-wired establish and
+hold cleanly, so the limit is the wireless hop, not the endpoints. **The operational
+conclusion: prefer 48 kHz for a Wi-Fi-bridged show.** It roughly halves both the
+establishment window's fragility and the airtime load, with wide margin measured at
+48 kHz (roughly half the radio's airtime budget, several times the burst headroom).
+Reserve 96 kHz over Wi-Fi for a single segment with no contention, and confirm
+establishment itself — not just steady-state audio quality — before relying on it.
+
 ## The hardware verdict — i226 LaunchTime/TSN + PTP
 
 Move the master-facing leg onto hardware that has both **ETF hardware offload (TSN
