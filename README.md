@@ -26,6 +26,13 @@ Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communic
   *audio* source), the 8-channel ceiling that bites boxes wider than 8 inputs, and
   why FreeREAC does not ship an OBS plugin that binds the wire itself. Includes the
   survey of the existing `obs-h8819-source` plugin.
+- **[2026-09-01-obs-route-assessment.md](2026-09-01-obs-route-assessment.md)** —
+  the three OBS routes assessed side by side against a live two-segment rig at
+  96 kHz: the zero-code PipeWire route (with the node table, the rate story and
+  why attaching OBS cannot disturb the console), the existing `obs-h8819-source`
+  plugin (licence, build, and the three patches we owe it — including a
+  buffer-overread fix), and what an OBS source built on `libreac` would cost.
+  Verdict: ship the guide, not a plugin.
 
 For the on-wire protocol itself, see
 [reac-protocol](https://github.com/FreeREAC/reac-protocol); for the raw working
