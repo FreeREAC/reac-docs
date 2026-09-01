@@ -3,11 +3,11 @@
 How to get REAC channels into OBS Studio, and why FreeREAC does not ship an OBS
 plugin that binds the wire itself.
 
-> The three routes were re-assessed against the live rig on 2026-09-01 and this
-> verdict was reaffirmed. See
-> [2026-09-01-obs-route-assessment.md](2026-09-01-obs-route-assessment.md) for the
-> live-graph evidence, the rate story at 96 kHz, and the upstream patches we owe
-> `obs-h8819-source`.
+> The three routes (consume `reac-pw`'s PipeWire nodes, adopt the third-party
+> `obs-h8819-source` plugin, or build a new source on `libreac`) have been
+> reassessed against a live two-segment 96 kHz rig, and this verdict was
+> reaffirmed. What had gone stale was the evidence, not the answer — see the
+> corrected node table and recipe below.
 
 ## The short answer
 
@@ -118,6 +118,28 @@ Worth knowing as well: libreac carried a **plain-LE** downstream layout as its
 default until 0.5.0, while this plugin had the braid from the start. The braid is
 the one true layout in both directions; plain LE survives only as the named
 diagnostic `reac_decode_plain_le()`.
+
+### What we owe it
+
+The relationship runs both ways. Three small patches, worth sending upstream:
+
+- **A sample rate that is not hardcoded 48 kHz.** The REAC frame is
+  rate-invariant — 40 ch × 12 samples × 3 B at every rate, only the packet rate
+  changes (3675 / 4000 / 8000 pps at 44.1 / 48 / 96 kHz) — so threading a rate
+  property into the sample-time arithmetic closes the 44.1 kHz and 96 kHz gaps
+  in one change, and the rate can even be auto-detected from the packet cadence
+  the helper already timestamps.
+- **A frame-length guard.** Frame acceptance checks only the EtherType and the
+  `C2 EA` tail marker, then reads 1440 bytes unconditionally. A REAC **upstream
+  return** (a stagebox's own feed, 340–1204 B on the boxes we have measured)
+  carries the same EtherType and the same tail marker, passes both tests, and
+  causes a roughly 1150-byte buffer overread inside the `CAP_NET_RAW`-privileged
+  helper. Checking the geometry against the role is the one-line fix.
+- **Tolerate the 2-byte FCS residue.** Many capture paths leave the frame's own
+  Ethernet FCS in place (56 of 76 captures in our corpus), which the tail-marker
+  check currently rejects outright — on an affected path the source is silent,
+  with only a line on stderr to say why. Accepting the marker at either
+  `caplen-2` or `caplen-4` fixes it.
 
 ## If the question comes back
 

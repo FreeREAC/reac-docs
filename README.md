@@ -22,17 +22,12 @@ Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communic
   the reac-aes67 bridge, packaged as a small appliance (Pi 4 monitoring-grade,
   i226 sample-accurate).
 - **[obs-studio.md](obs-studio.md)** — getting REAC channels into OBS Studio: take
-  them from `reac-pw`'s PipeWire nodes (via `pipewire-pulse` — OBS has no PipeWire
-  *audio* source), the 8-channel ceiling that bites boxes wider than 8 inputs, and
-  why FreeREAC does not ship an OBS plugin that binds the wire itself. Includes the
-  survey of the existing `obs-h8819-source` plugin.
-- **[2026-09-01-obs-route-assessment.md](2026-09-01-obs-route-assessment.md)** —
-  the three OBS routes assessed side by side against a live two-segment rig at
-  96 kHz: the zero-code PipeWire route (with the node table, the rate story and
-  why attaching OBS cannot disturb the console), the existing `obs-h8819-source`
-  plugin (licence, build, and the three patches we owe it — including a
-  buffer-overread fix), and what an OBS source built on `libreac` would cost.
-  Verdict: ship the guide, not a plugin.
+  them from `reac-pw`'s PipeWire nodes (directly via a PipeWire-audio plugin, or
+  through `pipewire-pulse` without one), the recipe for choosing 8 of a 16- or
+  32-channel box's channels (the ceiling every OBS source has), and why FreeREAC
+  ships this guide rather than a plugin that binds the wire itself. Includes the
+  survey of the existing `obs-h8819-source` plugin and the three patches we owe
+  it upstream.
 
 For the on-wire protocol itself, see
 [reac-protocol](https://github.com/FreeREAC/reac-protocol); for the raw working
