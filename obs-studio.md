@@ -3,6 +3,12 @@
 How to get REAC channels into OBS Studio, and why FreeREAC does not ship an OBS
 plugin that binds the wire itself.
 
+> The three routes were re-assessed against the live rig on 2026-09-01 and this
+> verdict was reaffirmed. See
+> [2026-09-01-obs-route-assessment.md](2026-09-01-obs-route-assessment.md) for the
+> live-graph evidence, the rate story at 96 kHz, and the upstream patches we owe
+> `obs-h8819-source`.
+
 ## The short answer
 
 **Take REAC audio from `reac-pw`'s PipeWire nodes.** `reac-pw` owns the segment,
@@ -12,9 +18,10 @@ the OBS side.
 
 A second consumer binding EtherType `0x8819` directly would be a second
 implementation of a job `reac-pw` already does. RX-only binding is *technically*
-safe beside a running master — `reac_seglock.h` is explicit that binding is not
-mastering, and the kernel module counts frames on a live segment without
-disturbing it — but "it would not break anything" is not a reason to build it.
+safe beside a running master — `reac-pw`'s `reac_seglock.h` is explicit that
+binding is not mastering, and the kernel module counts frames on a live segment
+without disturbing it — but "it would not break anything" is not a reason to
+build it.
 
 ## The recipe
 
@@ -31,18 +38,29 @@ Two things about this surprise people, both verified on OBS Studio 32.1.1:
   `pulse_input_capture` / `pulse_output_capture`, plus ALSA and JACK.
 
   **A separate plugin adds PipeWire audio capture, and the rig has it**:
-  `linux-pipewire-audio` sits in `/usr/lib64/obs-plugins/` beside `obs-pwvideo`.
-  With it, `reac-pw`'s nodes are selectable as PipeWire sources directly, with no
-  Pulse layer in the path — which is the better arrangement, since it keeps the
-  graph one hop shorter and the node names intact.
+  [`dimtpap/obs-pipewire-audio-capture`](https://github.com/dimtpap/obs-pipewire-audio-capture).
+  Look for it in the **user** plugin directory —
+  `~/.config/obs-studio/plugins/linux-pipewire-audio/bin/64bit/` — not in
+  `/usr/lib64/obs-plugins/`, which holds only the video-only `linux-pipewire.so`
+  and `obs-pwvideo.so`. Checking the system directory alone makes an installed
+  plugin look missing. With it, `reac-pw`'s nodes are selectable as PipeWire
+  sources directly, with no Pulse layer in the path — the better arrangement,
+  since it keeps the graph one hop shorter and the node names intact.
 
   Without it, the nodes still reach OBS through `pipewire-pulse`, appearing under
-  their node names, e.g.
+  their node names. Read from the rig on 2026-09-01:
 
   ```
-  reac-capture         float32le  8ch  48000Hz   RUNNING
-  reac-capture.s1608   float32le 16ch  48000Hz   RUNNING
+  reac-capture.seg2           float32le  32ch  96000Hz   RUNNING
+  reac-playback.seg2.monitor  float32le   8ch  96000Hz   SUSPENDED
+  reac-playback.monitor       float32le   8ch  96000Hz   SUSPENDED
+  reac-capture                float32le  16ch  96000Hz   RUNNING
   ```
+
+  The segment suffix comes from `REAC_NAME` in that segment's env file, and the
+  rate from `REAC_RATE`; neither is derived from the box model. An earlier
+  revision of this document quoted `.s1608`, 8/16 channels and 48000 Hz — all
+  three had moved by 2026-09-01. Treat any node table here as dated evidence.
 
 - **OBS caps a source at 8 channels.** `MAX_AUDIO_CHANNELS` is 8 and the widest
   speaker layout is `SPEAKERS_7POINT1`. A box wider than 8 inputs — an S-1608
@@ -52,9 +70,19 @@ Two things about this surprise people, both verified on OBS Studio 32.1.1:
   read from the OBS headers and binary; which channels survive a 16 ch node has
   not been measured.)*
 
-  So for anything wider than 8 channels, do the selection **before** OBS: give
-  `reac-pw` the routing, or interpose a PipeWire node, so what OBS sees is a
-  node of at most 8 channels carrying the channels you actually want.
+  So for anything wider than 8 channels, do the selection **before** OBS. You do
+  not need to interpose a node to do it: OBS's own **"JACK Input Client"** source
+  (`linux-jack.so`, shipped with OBS) takes a **Number of Channels** and registers
+  that many input ports, and since `pipewire-jack` provides `libjack.so.0` those
+  ports are ordinary PipeWire ports. Wire exactly the channels you want with
+  `pw-link`, `helvum` or `qpwgraph` — REAC channel *n* is `capture_AUX<n-1>`:
+
+  ```
+  pw-link 'reac-capture.seg2:capture_AUX6' 'OBS Studio: Stage:in_1'
+  ```
+
+  A PipeWire loopback node of ≤8 channels remains the alternative if you would
+  rather have a persistent named device than ad-hoc links.
 
 ## Prior art: `obs-h8819-source`
 
