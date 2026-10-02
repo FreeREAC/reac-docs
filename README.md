@@ -1,26 +1,12 @@
 # reac-docs
 
-Engineering **findings** and the **rig recipe** behind FreeREAC — the distilled
-result of getting Roland REAC to run across a 5 GHz Wi-Fi link, and how the pieces
-(transport + re-pacer + converter) fit together.
+User guides for FreeREAC: how to put REAC audio to work with the applications you
+already run.
 
 Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communications*.
 
-## Documents
+## Guides
 
-- **[findings.md](findings.md)** — the investigation, distilled: why Wi-Fi breaks
-  REAC, why a software re-pacer is the right first move, the clock-recovery problem
-  and how it was resolved, and where software hits a hard wall — and what hardware
-  (i226 / TSN) fixes it.
-- **[rig-recipe.md](rig-recipe.md)** — how to build a two-router Wi-Fi REAC bridge:
-  the transport fabric (gretap + VLAN trunk), where the re-pacer goes and why
-  de-jitter is directional, buffer sizing against the link-status budget, and the
-  netifd/UCI persistence traps.
-- **[aes67-firmware-feasibility.md](aes67-firmware-feasibility.md)** — can a REAC
-  stagebox be reflashed to speak AES67 natively? (No — the audio path lives in the
-  FPGA, not the reflashable CPU.) The path that works: openmixer as REAC master +
-  the reac-aes67 bridge, packaged as a small appliance (Pi 4 monitoring-grade,
-  i226 sample-accurate).
 - **[obs-studio.md](obs-studio.md)** — getting REAC channels into OBS Studio: take
   them from `reac-pw`'s PipeWire nodes (directly via a PipeWire-audio plugin, or
   through `pipewire-pulse` without one), the recipe for choosing 8 of a 16- or
@@ -30,8 +16,7 @@ Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communic
   it upstream.
 
 For the on-wire protocol itself, see
-[reac-protocol](https://github.com/FreeREAC/reac-protocol); for the raw working
-material these are distilled from, [reac-lab](https://github.com/FreeREAC/reac-lab).
+[reac-protocol](https://github.com/FreeREAC/reac-protocol).
 
 ## The FreeREAC family
 
@@ -43,7 +28,7 @@ material these are distilled from, [reac-lab](https://github.com/FreeREAC/reac-l
 | [reac-protocol](https://github.com/FreeREAC/reac-protocol) | the REAC protocol reference |
 | [reac-tools](https://github.com/FreeREAC/reac-tools) | REAC traffic analysis + diagnostics |
 | [reac-label](https://github.com/FreeREAC/reac-label) | Roland mixer → channel-name labeller |
-| [reac-lab](https://github.com/FreeREAC/reac-lab) | the raw working material |
+| [reac-lab](https://github.com/FreeREAC/reac-lab) | REAC wire captures |
 
 ## License
 

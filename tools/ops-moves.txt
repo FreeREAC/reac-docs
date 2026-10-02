@@ -1,0 +1,6 @@
+# Moved to FreeREAC/freereac-ops as reac-docs/<path> (tools/freereac_ops.py). Cite one by its
+# slug, the path without its extension. The list is the guard's: a path here never comes back.
+# base 79d4f4f54e6c61634827d7b938581f195a3166dc
+aes67-firmware-feasibility.md
+findings.md
+rig-recipe.md

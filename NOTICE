@@ -3,9 +3,8 @@ Copyright (C) 2026 Pau Aliagas <linuxnow@gmail.com>
 
 Licensed under GPL-3.0-or-later (see LICENSE).
 
-Engineering findings and the rig recipe behind FreeREAC: getting Roland REAC to run
-across a 5 GHz Wi-Fi link, distilled from FreeREAC's own measurements and on-rig work.
-All original work and observations; site-, venue-, and client-specific details are
-omitted. Firmware-derived facts (the slave link-check behaviour) are re-expressed in
-our own words; no vendor binaries or decompilation listings are reproduced. REAC is a
-Roland trademark; FreeREAC is not affiliated with or endorsed by Roland.
+User guides for FreeREAC: putting REAC audio to work with the applications you already
+run, starting with OBS Studio. All original work and observations; site-, venue-, and
+client-specific details are omitted. No vendor binaries or decompilation listings are
+reproduced. REAC is a Roland trademark; FreeREAC is not affiliated with or endorsed by
+Roland.
