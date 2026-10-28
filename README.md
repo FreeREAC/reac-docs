@@ -19,8 +19,8 @@ Part of [FreeREAC](https://github.com/FreeREAC) — *REAC Exposed Audio Communic
 - **[aes67-firmware-feasibility.md](aes67-firmware-feasibility.md)** — can a REAC
   stagebox be reflashed to speak AES67 natively? (No — the audio path lives in the
   FPGA, not the reflashable CPU.) The path that works: openmixer as REAC master +
-  the reac-aes67 bridge, packaged as a small appliance (Pi 4 monitoring-grade,
-  i226 sample-accurate).
+  an AES67 bridge (in preparation), packaged as a small appliance (Pi 4
+  monitoring-grade, i226 sample-accurate).
 - **[obs-studio.md](obs-studio.md)** — getting REAC channels into OBS Studio: take
   them from `reac-pw`'s PipeWire nodes (directly via a PipeWire-audio plugin, or
   through `pipewire-pulse` without one), the recipe for choosing 8 of a 16- or
@@ -39,7 +39,7 @@ material these are distilled from, [reac-lab](https://github.com/FreeREAC/reac-l
 |---|---|
 | [reac-transport](https://github.com/FreeREAC/reac-transport) | carry REAC across an OpenWrt network — VLAN trunk or gretap tunnel |
 | [reac-repacer](https://github.com/FreeREAC/reac-repacer) | de-jitter a REAC stream over a bursty link (Wi-Fi) |
-| [reac-aes67](https://github.com/FreeREAC/reac-aes67) | terminate REAC into AES67 (RTP L24) |
+| AES67 bridge (in preparation, not yet public) | terminate REAC into AES67 (RTP L24) |
 | [reac-protocol](https://github.com/FreeREAC/reac-protocol) | the REAC protocol reference |
 | [reac-tools](https://github.com/FreeREAC/reac-tools) | REAC traffic analysis + diagnostics |
 | [reac-label](https://github.com/FreeREAC/reac-label) | Roland mixer → channel-name labeller |
