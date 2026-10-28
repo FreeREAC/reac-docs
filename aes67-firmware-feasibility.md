@@ -56,7 +56,7 @@ stagebox untouched:
    REAC** — the stagebox stays a dumb REAC I/O endpoint while openmixer owns the
    DSP (PipeWire + LV2), with full insert freedom.
 2. **An external REAC↔AES67 bridge.**
-   [`reac-aes67`](https://github.com/FreeREAC/reac-aes67) converts the stream and
+   An AES67 bridge (in preparation, not yet public) converts the stream and
    **publishes the stagebox as an AES67 endpoint** (SAP/SDP) — which then
    interops with **Dante** (via its AES67 mode) and **PipeWire** (via RTP /
    `module-rtp`). AES67 is just constrained RTP, so this is equally the answer for
@@ -96,5 +96,5 @@ router SoC.
 - [findings.md](findings.md) — the Wi-Fi REAC investigation and the i226 / TSN
   hardware wall.
 - [rig-recipe.md](rig-recipe.md) — building the two-router REAC bridge.
-- [reac-protocol](https://github.com/FreeREAC/reac-protocol),
-  [reac-aes67](https://github.com/FreeREAC/reac-aes67), `reac-pw`.
+- [reac-protocol](https://github.com/FreeREAC/reac-protocol), `reac-pw`; the AES67
+  bridge is in preparation and not yet public.

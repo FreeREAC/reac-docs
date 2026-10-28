@@ -1,10 +1,10 @@
 # The two-router Wi-Fi REAC rig recipe
 
 How the three pieces — [reac-transport](https://github.com/FreeREAC/reac-transport),
-[reac-repacer](https://github.com/FreeREAC/reac-repacer), and
-[reac-aes67](https://github.com/FreeREAC/reac-aes67) — fit on a two-router Wi-Fi REAC
-bridge. Roles, not host names: a **master-side router** (faces the mixer) and a
-**box-side router** (faces the stageboxes), joined by a 5 GHz WDS. The *why* behind
+[reac-repacer](https://github.com/FreeREAC/reac-repacer), and the REAC→AES67 bridge (in
+preparation, not yet public) — fit on a two-router Wi-Fi REAC bridge. Roles, not host names: a
+**master-side router** (faces the mixer) and a **box-side router** (faces the stageboxes), joined
+by a 5 GHz WDS. The *why* behind
 each choice is in [findings.md](findings.md).
 
 ## Transport fabric

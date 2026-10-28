@@ -319,8 +319,8 @@ network, and regenerate hardware-clean REAC into the master, with the relay acti
 local REAC master at the far end. Carrying a synchronous transport over a variable-latency
 wireless link is inherently adversarial (the buffer must always be sized against the worst
 recent burst); a jitter-tolerant packet-audio format removes that constraint entirely —
-this is the original goal of the [reac-aes67](https://github.com/FreeREAC/reac-aes67)
-project. The transparent re-pacer is the drop-in fix; the AES67 path is the robust one.
+this is the original goal of the AES67 bridge, which is in preparation and not yet public.
+The transparent re-pacer is the drop-in fix; the AES67 path is the robust one.
 
 Prior public software-REAC efforts (`per-gron/reacdriver`) hit the same master/slave jitter
 wall and shipped listen-only; the ETF + clock-repeater approach here gets further but
